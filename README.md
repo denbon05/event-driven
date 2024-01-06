@@ -1,4 +1,30 @@
-# EventDriven
+# event-driven
+
+The project apps:
+
+**gui** - External graphical interaction interface.<br />
+**bastion** - Secure API for interaction with the internal apps.<br />
+**user** - Keeps track on users' data records.<br />
+
+## Dev
+
+Prerequisites:
+
+|      pkg       | version |
+| :------------: | :-----: |
+|    Node.js     |  ^18.x  |
+| docker compose |  ^2.x   |
+
+```sh
+# launch the project locally
+docker compose up
+```
+
+## Project architecture
+
+![schema](./event-driven-microservices.drawio.svg)
+
+## Nx
 
 <a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
 
