@@ -2,4 +2,4 @@
 
 The microservice designed to keep and manage users' data.
 
-**Internal service accepts RPC over HTTP**
+**Internal service uses USER topic**

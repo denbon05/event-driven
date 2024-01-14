@@ -7,7 +7,8 @@ import { bastionApiURL } from '../constants';
 // ? https://nx.dev/recipes/node/application-proxies#set-up-application-proxies
 
 const bastionService = Axios.create({
-  baseURL: new URL('auth', bastionApiURL).toString(),
+  url: 'api',
+  baseURL: new URL('api/v1/auth', bastionApiURL).toString(),
 });
 
 export const signup = async (userData: ISignupForm) => {

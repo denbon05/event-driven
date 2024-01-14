@@ -18,10 +18,9 @@ export async function app(fastify: FastifyInstance, opts: AppOptions) {
     options: { ...opts },
   });
 
-  // This loads all plugins defined in routes
-  // define your routes in one of these
+  // This loads all plugins defined in kafka
   fastify.register(AutoLoad, {
-    dir: path.join(__dirname, 'routes'),
+    dir: path.join(__dirname, 'kafka'),
     options: { ...opts },
   });
 }

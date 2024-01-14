@@ -1,4 +1,4 @@
-version: '3'
+version: '3.6'
 
 # TODO manage via Ansible
 services:
@@ -14,22 +14,36 @@ services:
       - .:/app
       - ./node_modules:/app/node_modules
     command: npm run serve:gui
+    networks:
+      - web
 
   bastion:
     user: node
+    # try to restart the service on failure
+    restart: on-failure:3
     build:
       context: .
       dockerfile: ./apps/bastion/Dockerfile
+    depends_on:
+      - kafka
     env_file: variables/.env.bastion
     ports:
       - 4001:4001
     volumes:
       - .:/app
       - ./node_modules:/app/node_modules
+    # command: sh -c "sleep 50000 && npm run serve:bastion"
     command: npm run serve:bastion
+    networks:
+      - web
+      - kafka
 
   user-service:
     user: node
+    # try to restart the service on failure
+    restart: on-failure:3
+    depends_on:
+      - userdb
     build:
       context: .
       dockerfile: ./apps/user/Dockerfile
@@ -40,3 +54,63 @@ services:
       - .:/app
       - ./node_modules:/app/node_modules
     command: npm run serve:user
+    networks:
+      - user-service
+      - kafka
+
+  userdb:
+    image: postgres:16.1-alpine3.19
+    restart: always
+    env_file: variables/.env.user
+    ports:
+      - 5434:5432
+    volumes:
+      - user_data:/var/lib/postgresql/data
+    networks:
+      - user-service
+
+  zookeeper:
+    restart: always
+    image: docker.io/bitnami/zookeeper:3.8
+    ports:
+      - 2181:2181
+    volumes:
+      - zookeeper-volume:/bitnami
+    env_file:
+      - variables/.env.zookeeper
+    networks:
+      - kafka
+
+  kafka:
+    restart: always
+    image: docker.io/bitnami/kafka:3.3
+    ports:
+      - 9093:9093
+    volumes:
+      - kafka-volume:/bitnami
+    env_file:
+      - variables/.env.kafka
+    depends_on:
+      - zookeeper
+    networks:
+      - kafka
+
+  ubuntu:
+    image: ubuntu:22.04
+    ports:
+      - 22:22
+    depends_on:
+      - kafka
+    networks:
+      - kafka
+    command: sleep 5000000000
+
+volumes:
+  user_data:
+  kafka-volume:
+  zookeeper-volume:
+
+networks:
+  user-service:
+  web:
+  kafka:

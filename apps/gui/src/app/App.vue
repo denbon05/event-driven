@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import UserAuth from './components/UserAuth.vue';
+import UserAuth from './components/auth/UserAuth.vue';
 import ItemsList from './components/ItemsList.vue';
 import { useUser } from './composables/user';
 

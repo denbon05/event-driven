@@ -23,6 +23,9 @@
       ],
       "@bastion-user-types": [
         "libs/shared-types/src/bastion-user.ts"
+      ],
+      "@kafka-types": [
+        "libs/shared-types/src/kafka/index.ts"
       ]
     }
   },

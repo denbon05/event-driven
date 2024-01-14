@@ -13,9 +13,6 @@
     "src/**/*.test.ts",
     "src/**/*.spec.ts",
     "src/**/*.d.ts",
-    "__tests__/auth.service.spec.ts",
-    "__tests__/auth.controller.spec.ts",
-    "__tests__/jwt-auth.guard.spec.ts",
-    "__tests__/users.service.spec.ts"
+    "__tests__/**/*.spec.ts"
   ]
 }

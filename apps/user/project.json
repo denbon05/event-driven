@@ -6,16 +6,27 @@
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "defaultConfiguration": "production",
       "options": {
         "platform": "node",
         "outputPath": "dist/apps/user",
-        "format": ["cjs"],
+        "format": [
+          "cjs"
+        ],
         "bundle": false,
         "main": "apps/user/src/main.ts",
         "tsConfig": "apps/user/tsconfig.app.json",
-        "assets": ["apps/user/src/assets"],
+        "assets": [
+          "apps/user/src/assets",
+          {
+            "input": "apps/user",
+            "output": ".",
+            "glob": ".env.local"
+          }
+        ],
         "generatePackageJson": true,
         "esbuildOptions": {
           "sourcemap": true,
@@ -38,6 +49,9 @@
     },
     "serve": {
       "executor": "@nx/js:node",
+      "dependsOn": [
+        "migrate-dev"
+      ],
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "user:build"
@@ -53,11 +67,18 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
+      "outputs": [
+        "{options.outputFile}"
+      ]
+    },
+    "migrate-dev": {
+      "command": "npx prisma migrate dev --schema apps/user/prisma/schema.prisma"
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "apps/user/jest.config.ts"
       }
