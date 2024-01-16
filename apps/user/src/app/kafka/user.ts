@@ -1,22 +1,31 @@
 import { KafkaTopics } from '@kafka-types';
 import { FastifyInstance } from 'fastify';
+import useUserHandler from '../handlers/UserHandler';
 
-export default async function (fastify: FastifyInstance) {
+const consume = async (fastify: FastifyInstance) => {
+  const userHandler = useUserHandler(fastify);
+
   await fastify.kafkaConsumer.subscribe({
     topic: KafkaTopics.USER,
     fromBeginning: true,
   });
 
   fastify.kafkaConsumer.run({
-    eachMessage: async ({ topic, message }) => {
-      console.log('@@@@@@@ User kafka consumer', {
-        topic,
-        value: message.value.toString('utf-8'),
-        key: message.key.toString('utf-8'),
-      });
+    eachMessage: async ({ message: { key, value } }) => {
+      const payload = JSON.parse(value.toString());
+      userHandler.emit(key.toString('utf-8'), payload);
     },
   });
-  // TODO write to db
-  // catch err -> send to kafka `user` topic
-  // notify the gui in case there is an error
+};
+
+export default async function (fastify: FastifyInstance) {
+  try {
+    await consume(fastify);
+  } catch (err) {
+    console.error(err);
+    fastify.kafkaProducer.send({
+      topic: KafkaTopics.ERROR,
+      messages: [{ key: 'user-service', value: JSON.stringify(err) }],
+    });
+  }
 }

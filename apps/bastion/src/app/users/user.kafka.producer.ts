@@ -6,35 +6,39 @@ import {
   OnApplicationShutdown,
   OnModuleInit,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ClientKafka, Payload } from '@nestjs/microservices';
-import { Producer } from '@nestjs/microservices/external/kafka.interface';
+import { Producer, Kafka } from 'kafkajs';
 
 @Injectable()
 export class UserKafkaProducer implements OnModuleInit, OnApplicationShutdown {
-  private producer: Producer;
+  private readonly producer: Producer;
 
-  constructor(
-    @Inject('USER_SERVICE') private readonly kafkaClient: ClientKafka
-  ) {}
+  constructor(private readonly configService: ConfigService) {
+    const kafka = new Kafka({
+      brokers: [configService.getOrThrow<string>('kafkaBrokerURI')],
+    });
+    this.producer = kafka.producer({ allowAutoTopicCreation: true });
+  }
 
   async sendUserVerified(@Payload() user: SignupVerified) {
-    const meta = await this.producer.send({
+    const meta = this.producer.send({
       topic: KafkaTopics.USER,
-      messages: [{ value: JSON.stringify(user), key: 'user_verified' }],
+      messages: [
+        {
+          value: JSON.stringify(user),
+          key: 'user_verified',
+        },
+      ],
     });
-    // ? the above is similar to the below approach
-    // const meta = this.kafkaClient.emit(KafkaTopics.USER, {
-    //   value: user,
-    //   key: 'user_verified',
-    // });
     console.log('!!!!!!! META', meta);
   }
 
   async onModuleInit() {
-    this.producer = await this.kafkaClient.connect();
+    await this.producer.connect();
   }
 
   async onApplicationShutdown() {
-    await this.kafkaClient.close();
+    await this.producer.disconnect();
   }
 }

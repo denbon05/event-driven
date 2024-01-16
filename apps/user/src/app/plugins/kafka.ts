@@ -14,9 +14,10 @@ const kafkaPlugin: FastifyPluginAsync = fp(async (server) => {
   const kafka = new Kafka({
     clientId: 'user-service',
     brokers: [process.env.KAFKA_BROKER_URI],
+    retry: { retries: 3 },
   });
 
-  const producer = kafka.producer();
+  const producer = kafka.producer({ allowAutoTopicCreation: true });
   const consumer = kafka.consumer({ groupId: 'user-group' });
 
   await producer.connect();

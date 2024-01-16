@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 export enum KafkaTopics {
   USER = 'user',
+  ERROR = 'error',
 }
 
 /** User topic kafka types */

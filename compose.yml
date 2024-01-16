@@ -4,6 +4,7 @@ version: '3.6'
 services:
   gui:
     user: node
+    container_name: gui-service
     build:
       context: .
       dockerfile: ./apps/gui/Dockerfile
@@ -21,6 +22,7 @@ services:
     user: node
     # try to restart the service on failure
     restart: on-failure:3
+    container_name: bastion-service
     build:
       context: .
       dockerfile: ./apps/bastion/Dockerfile
@@ -32,7 +34,6 @@ services:
     volumes:
       - .:/app
       - ./node_modules:/app/node_modules
-    # command: sh -c "sleep 50000 && npm run serve:bastion"
     command: npm run serve:bastion
     networks:
       - web
@@ -42,6 +43,7 @@ services:
     user: node
     # try to restart the service on failure
     restart: on-failure:3
+    container_name: user-service
     depends_on:
       - userdb
     build:
@@ -60,6 +62,7 @@ services:
 
   userdb:
     image: postgres:16.1-alpine3.19
+    container_name: user-db
     restart: always
     env_file: variables/.env.user
     ports:
@@ -70,8 +73,9 @@ services:
       - user-service
 
   zookeeper:
+    image: debezium/zookeeper:2.5.0.Final
+    container_name: zookeeper-debezium
     restart: always
-    image: docker.io/bitnami/zookeeper:3.8
     ports:
       - 2181:2181
     volumes:
@@ -82,10 +86,11 @@ services:
       - kafka
 
   kafka:
+    image: debezium/kafka:2.5.0.Final
+    container_name: kafka-debezium
     restart: always
-    image: docker.io/bitnami/kafka:3.3
     ports:
-      - 9093:9093
+      - 9092:9092
     volumes:
       - kafka-volume:/bitnami
     env_file:
@@ -95,8 +100,23 @@ services:
     networks:
       - kafka
 
+  postgres-connector:
+    image: debezium/connect:2.5.0.Final
+    container_name: pg-debezium
+    ports:
+      - 9090:8083
+    depends_on:
+      - kafka
+      - userdb
+    env_file:
+      - variables/.env.pg-debezium
+    networks:
+      - kafka
+
+  # container for debug
   ubuntu:
     image: ubuntu:22.04
+    container_name: ub
     ports:
       - 22:22
     depends_on:

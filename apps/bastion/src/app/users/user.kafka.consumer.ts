@@ -1,27 +1,37 @@
 import { KafkaTopics } from '@kafka-types';
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
-import { ClientKafka } from '@nestjs/microservices';
+import {
+  Injectable,
+  OnApplicationShutdown,
+  OnModuleInit,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { Consumer, Kafka } from 'kafkajs';
 
 @Injectable()
-export class UserKafkaConsumer implements OnModuleInit {
-  constructor(
-    @Inject('USER_SERVICE') private readonly kafkaClient: ClientKafka
-  ) {}
+export class UserKafkaConsumer implements OnModuleInit, OnApplicationShutdown {
+  private readonly consumer: Consumer;
 
-  // @MessagePattern(KafkaTopics.USER)
-  // test1(data: unknown) {
-  //   console.log('!!!!!!! USER test1\n', data);
-  // }
-
-  // @EventPattern(KafkaTopics.USER)
-  // test2(data: unknown) {
-  //   console.log('!!!!!!! USER test2\n', data);
-  // }
+  constructor(private readonly configService: ConfigService) {
+    const kafka = new Kafka({
+      brokers: [configService.getOrThrow<string>('kafkaBrokerURI')],
+    });
+    this.consumer = kafka.consumer({ groupId: 'bastion-consumer' });
+  }
 
   async onModuleInit() {
-    this.kafkaClient.subscribeToResponseOf(KafkaTopics.USER);
-    await this.kafkaClient.connect();
-    const consumerAssignments = this.kafkaClient.getConsumerAssignments();
-    console.log('!!!!! consumerAssignments\n', consumerAssignments);
+    await this.consumer.connect();
+    await this.consumer.subscribe({
+      topic: KafkaTopics.USER,
+      fromBeginning: true,
+    });
+    await this.consumer.run({
+      eachMessage: async ({ message: { key, value } }) => {
+        console.log('YAY !!!!!!!!!\n', { key, value });
+      },
+    });
+  }
+
+  async onApplicationShutdown() {
+    await this.consumer.disconnect();
   }
 }
