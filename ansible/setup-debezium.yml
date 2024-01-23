@@ -1,0 +1,25 @@
+---
+- name: Setup debezium
+  hosts: local
+
+  tasks:
+    - name: Register db connector status
+      community.docker.docker_compose:
+        project_src: ../
+        state: present
+        services:
+          - pg-connector
+      register: compose_output
+
+    - name: Verify db connector is up
+      ansible.builtin.assert:
+        that:
+          - 'compose_output.services.pg_connector.state.running'
+        fail_msg: It seems the db connector is not up
+
+    - name: Send config to debezium
+      ansible.builtin.uri:
+        url: '{{ pg_debezium_url }}/accounts/'
+        method: POST
+        body_format: json
+        body: "{{ lookup('ansible.builtin.template', 'debezium-cfg.json.j2') }}"

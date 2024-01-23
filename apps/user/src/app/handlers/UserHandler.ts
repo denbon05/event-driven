@@ -1,4 +1,4 @@
-import { SignupVerified } from '@bastion-user-types';
+import { SignupVerified } from '@auth-user-types';
 import { KafkaUser } from '@kafka-types';
 import EventEmitter from 'events';
 import { FastifyInstance } from 'fastify';

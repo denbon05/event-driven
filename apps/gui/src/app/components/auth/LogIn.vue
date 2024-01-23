@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ILoginForm } from '@gui-bastion-types';
+import type { ILoginForm } from '@gui-auth-types';
 import { reactive } from 'vue';
 import { login } from '../../../api/auth';
 

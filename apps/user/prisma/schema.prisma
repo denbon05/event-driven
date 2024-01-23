@@ -24,4 +24,6 @@ model Account {
   email        String   @unique
   name         String
   passwordHash String
+
+  @@map("accounts")
 }

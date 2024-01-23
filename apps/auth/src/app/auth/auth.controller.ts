@@ -1,5 +1,5 @@
-import type { ILoginForm, ISignupForm } from '@gui-bastion-types';
-import { BastionURIs } from '@gui-bastion-types';
+import type { ILoginForm, ISignupForm } from '@gui-auth-types';
+import { BastionURIs } from '@gui-auth-types';
 import { Controller, Post, Request } from '@nestjs/common';
 import { Request as ExpressRequest } from 'express';
 import { Public } from '../common/decorators/public.decorator';

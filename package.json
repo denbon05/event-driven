@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "serve:gui": "npx nx serve gui",
-    "serve:bastion": "npx nx serve bastion",
+    "serve:auth": "npx nx serve auth",
     "serve:user": "npx nx serve user"
   },
   "private": true,

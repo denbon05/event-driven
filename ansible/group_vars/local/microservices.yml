@@ -1,0 +1,53 @@
+# Specify maintained microservices
+microservices:
+  - gui
+  - auth
+  - user
+  - kafka
+  - zookeeper
+  - pg_debezium
+
+# Environment variables of the microservices
+gui:
+  port: 4000
+  bastion_url: http://localhost:4001
+
+auth:
+  port: 4001
+  jwt_secret_key: supersecret
+  user_service_url: http://localhost:4002
+  kafka_broker_uri: kafka:9092
+
+user:
+  port: 4002
+  db_pass: userservice
+  db_port: 5434
+  db_user: developer
+  db_name: user
+  db_url: postgresql://developer:userservice@172.17.0.1:5434/user?connect_timeout=300
+  kafka_broker_uri: kafka:9092
+
+# for kafka cluster with more than one node:
+# https://github.com/wurstmeister/kafka-docker/wiki/Connectivity
+kafka:
+  port: 9092
+  broker_id: 1
+  allow_plain_text_listener: 'yes'
+  zookeeper_connect: zookeeper:2181
+  auto_create_topic_enabled: 'true'
+  delete_topic_enabled: 'true'
+  cfg_listener_security_protocol_map: CLIENT:PLAINTEXT,EXTERNAL:PLAINTEXT
+  cfg_inter_broker_listener_name: CLIENT
+
+zookeeper:
+  port: 2181
+  allow_anonymous_login: 'yes'
+  log_lvl: INFO
+
+pg_debezium:
+  port: 9090
+  group_id: 'pg'
+  bootstrap_servers: kafka:9092
+  config_storage_topic: pg_connect_configs
+  offset_storage_topic: pg_connect_offsets
+  status_storage_topic: pg_connect_statuses

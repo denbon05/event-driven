@@ -3,7 +3,7 @@
 The project apps:
 
 **gui** - External graphical interaction interface.<br />
-**bastion** - Secure API for interaction with the internal apps.<br />
+**auth** - Secure API for interaction with the internal apps.<br />
 **user** - Keeps track on users' data records.<br />
 
 ## Dev

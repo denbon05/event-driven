@@ -18,11 +18,11 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@gui-bastion-types": [
-        "libs/shared-types/src/gui-bastion.ts"
+      "@gui-auth-types": [
+        "libs/shared-types/src/gui-auth.ts"
       ],
-      "@bastion-user-types": [
-        "libs/shared-types/src/bastion-user.ts"
+      "@auth-user-types": [
+        "libs/shared-types/src/auth-user.ts"
       ],
       "@kafka-types": [
         "libs/shared-types/src/kafka/index.ts"

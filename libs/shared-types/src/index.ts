@@ -1,2 +1,2 @@
-export * from './gui-bastion';
-export * from './bastion-user';
+export * from './gui-auth';
+export * from './auth-user';

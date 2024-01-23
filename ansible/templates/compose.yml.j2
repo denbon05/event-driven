@@ -9,7 +9,7 @@ services:
       dockerfile: ./apps/gui/Dockerfile
     env_file: variables/.env.gui
     ports:
-      - '4000:4000'
+      - '{{gui.port}}:{{gui.port}}'
     volumes:
       - .:/app
       - ./node_modules:/app/node_modules
@@ -21,7 +21,7 @@ services:
     user: node
     # try to restart the service on failure
     restart: on-failure:3
-    container_name: auth-gateway
+    container_name: auth-service
     build:
       context: .
       dockerfile: ./apps/auth/Dockerfile
@@ -29,7 +29,7 @@ services:
       - kafka
     env_file: variables/.env.auth
     ports:
-      - '4001:4001'
+      - "{{auth.port}}:{{auth.port}}"
     volumes:
       - .:/app
       - ./node_modules:/app/node_modules
@@ -50,7 +50,7 @@ services:
       dockerfile: ./apps/user/Dockerfile
     env_file: variables/.env.user
     ports:
-      - '4002:4002'
+      - '{{user.port}}:{{user.port}}'
     volumes:
       - .:/app
       - ./node_modules:/app/node_modules
@@ -65,7 +65,7 @@ services:
     restart: always
     env_file: variables/.env.user
     ports:
-      - '5434:5432'
+      - "{{user.db_port}}:5432"
     volumes:
       - user_data:/var/lib/postgresql/data
     networks:
@@ -76,7 +76,7 @@ services:
     container_name: zookeeper-debezium
     restart: always
     ports:
-      - '2181:2181'
+      - '{{zookeeper.port}}:2181'
     volumes:
       - zookeeper-volume:/bitnami
     env_file:
@@ -89,7 +89,7 @@ services:
     container_name: kafka-debezium
     restart: always
     ports:
-      - '9092:9092'
+      - '{{kafka.port}}:9092'
     volumes:
       - kafka-volume:/bitnami
     env_file:
@@ -103,7 +103,7 @@ services:
     image: debezium/connect:2.5.0.Final
     container_name: pg-debezium
     ports:
-      - '9090:8083'
+      - '{{pg_debezium.port}}:8083'
     depends_on:
       - kafka
       - userdb

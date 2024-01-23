@@ -1,7 +1,7 @@
 import Cookie from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
-import type { IJwtPayload } from '@gui-bastion-types';
-import { CookieKeys } from '@gui-bastion-types';
+import type { IJwtPayload } from '@gui-auth-types';
+import { CookieKeys } from '@gui-auth-types';
 
 export const checkIsJwtExpired = (jwt: string) => {
   const decoded = jwtDecode<IJwtPayload>(jwt);

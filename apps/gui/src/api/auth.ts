@@ -1,6 +1,6 @@
 import Axios, { HttpStatusCode } from 'axios';
-import type { ILoginForm, ISignupForm } from '@gui-bastion-types';
-import { BastionURIs } from '@gui-bastion-types';
+import type { ILoginForm, ISignupForm } from '@gui-auth-types';
+import { BastionURIs } from '@gui-auth-types';
 import { bastionApiURL } from '../constants';
 
 // ? Alternative API declaration:

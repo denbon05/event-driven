@@ -1,0 +1,1 @@
+pg_debezium_url: 'http://localhost:{{pg_debezium.port}}'

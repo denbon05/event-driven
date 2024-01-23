@@ -1,0 +1,22 @@
+---
+- name: Setup dev project
+  hosts: local
+
+  tasks:
+    - name: Ensure env files are exist
+      ansible.builtin.template:
+        src: 'envs/env.{{ item }}.j2'
+        dest: '../variables/.env.{{ item }}'
+        mode: '0644'
+      loop: '{{ microservices }}'
+
+    - name: Clean install Node.js monorepo dependencies
+      community.general.npm:
+        ci: true
+        path: ../
+
+    - name: Ensure compose file is in the project root
+      ansible.builtin.template:
+        src: compose.yml.j2
+        dest: ../compose.yml
+        mode: '0644'

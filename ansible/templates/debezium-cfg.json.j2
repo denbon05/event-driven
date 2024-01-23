@@ -1,0 +1,15 @@
+{
+  "name": "pg-users-source",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "database.hostname": "{{userdb}}",
+    "database.port": "{{user.db_port}}",
+    "database.user": "{{user.db_user}}",
+    "database.password": "{{user.db_pass}}",
+    "database.dbname": "{{user.db_name}}",
+    "database.server.name": "user_server",
+    "plugin.name": "wal2json",
+    "table.include.list": "public.accounts",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter"
+  }
+}
